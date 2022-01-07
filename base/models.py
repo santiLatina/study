@@ -12,6 +12,14 @@ class Room(models.Model):
     updated = models.DateTimeField(auto_now=True) #Take a snapshot everytime
     created = models.DateTimeField(auto_now_add=True) #This time once is created never changes
 
+    
+    class Meta:
+        ''''
+        Order the list of rooms
+        De arriba a abajo por el -, sino se ordenaria desde abajo
+        '''
+        ordering = ['-updated', '-created']
+
     def __str__(self):
         """only returns room name"""
         return self.name
@@ -36,3 +44,4 @@ class Message(models.Model):
     def __str__(self):
         """"""
         return self.body[0:50]
+
