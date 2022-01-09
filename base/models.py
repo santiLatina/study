@@ -8,7 +8,7 @@ class Room(models.Model):
     topic = models.ForeignKey('Topic', on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
-    #participants =
+    participants = models.ManyToManyField(User, related_name='participants', blank=True)
     updated = models.DateTimeField(auto_now=True) #Take a snapshot everytime
     created = models.DateTimeField(auto_now_add=True) #This time once is created never changes
 
@@ -40,6 +40,10 @@ class Message(models.Model):
     body = models.TextField()
     updated = models.DateTimeField(auto_now=True) #Take a snapshot everytime
     created = models.DateTimeField(auto_now_add=True) #This time once is created never changes
+
+    class Meta:
+        ordering = ['-updated', '-created']
+
 
     def __str__(self):
         """"""
