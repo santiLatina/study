@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Message, Room, Topic
 from .forms import  RoomForm
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
@@ -36,7 +36,7 @@ def loginPage(request):
 
         user = authenticate(request,username=username,password=password)
         if user is not None:
-            """ Create de session """
+            """ Create the session """
             login(request,user)
             return redirect('Home')
         else:
@@ -70,6 +70,7 @@ def registerPage(request):
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
+    '''Room obtains a queryset of any of topic,name or description'''
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
         Q(name__icontains=q) |
@@ -99,7 +100,7 @@ def room(request, pk):
         return redirect('Room',pk=room.id)
 
     context = {'room': room, 'room_messages': room_messages, 'participants': participants}
-    return render(request, 'base/rooms.html',context)
+    return render(request, 'base/room.html',context)
 
 
 @login_required(login_url='Login')
@@ -108,7 +109,9 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('Home')
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
