@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 
 def loginPage(request):
     page = 'login'
+    user_incorrect = False
     if request.user.is_authenticated:
         return redirect('Home')
 
@@ -21,7 +22,7 @@ def loginPage(request):
         try:
             user = User.objects.get(email=email)
         except:
-            messages.error(request, 'User does not exist.')
+            user_incorrect = True
 
         user = authenticate(request,email=email,password=password)
         if user is not None:
@@ -29,9 +30,9 @@ def loginPage(request):
             login(request,user)
             return redirect('Home')
         else:
-            messages.error(request, 'Email or Password does not exist.')
+            user_incorrect = True
 
-    context = {'page': page}
+    context = {'page': page, 'user_incorrect': user_incorrect}
     return render(request, 'base/login_register.html', context)
 
 def logoutPage(request):
@@ -75,7 +76,7 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all().order_by('created')
     participants = room.participants.all()
 
     if request.method == 'POST':
