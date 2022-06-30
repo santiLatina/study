@@ -1,6 +1,6 @@
 # About
 
-Course about build a discord-like application with Python Django
+Course about build a discord-like application with Python Django by Dennis Ivy
 
 
 ### Content:
